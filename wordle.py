@@ -292,7 +292,7 @@ def main():
     ap.add_argument("--repeat", default=1, type=int, metavar="N",
                     help=("Run N independent trials with the same parameters. "
                           "(default = 1)"))
-    ap.add_argument("--words", default="sgb-words.txt", metavare="words.txt"
+    ap.add_argument("--words", default="sgb-words.txt", metavare="words.txt",
                     help=("Load word list from the given file. "
                           "(default = sgb-words.txt)"))
     ap.add_argument("--pop-size", metavar="P", type=int, default=20,
