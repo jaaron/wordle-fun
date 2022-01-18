@@ -234,9 +234,6 @@ def smart_choice(mask, words, pop_size = 65535):
             best = (avg, choice)
             pass
         pass
-    if not quiet:
-        print("Choosing %s average score: %f" % (best[1], best[0]))
-        pass
     return best[1]    
 
 def play(words, secret, get_choice):
@@ -254,11 +251,10 @@ def play(words, secret, get_choice):
     a     = ""
     turn = 0
     while a != "G"*wordlen:        
-        w = get_choice(mask, words)
         if not quiet:
-            print("%03d> %s" % (turn, w))
+            print("%03d> " % (turn), end="", flush=True)
             pass
-
+        w = get_choice(mask, words)
         if secret:
             a = assess(secret, w)
         else:
@@ -305,6 +301,8 @@ def main():
                     help="Use random choice guess strategy instead of smart_choice")
     ap.add_argument("--prompt-assess", action="store_true",
                     help="Prompt interactively for assessment of each guess")
+    ap.add_argument("--prompt-choice", action="store_true",
+                    help="Prompt interactively for guesses")
     ap.add_argument("--secret", metavar="SECRET", help="Specify the secret word")
     ap.add_argument("--quiet", action="store_true",
                     help="Only output the number of turns for each trial")
@@ -314,11 +312,18 @@ def main():
     words = load_dictionary(args.words)
     guesses = args.guess
     def chooser(mask,words):
+        if args.prompt_choice:
+            return input().strip().upper()
         if guesses:
-            return guesses.pop(0)
-        if args.random_choice:
-            return random.choice(words)
-        return smart_choice(mask, words, args.pop_size)
+            w = guesses.pop(0)
+        elif args.random_choice:
+            w = random.choice(words)
+        else:
+            w = smart_choice(mask, words, args.pop_size)
+        if not quiet:
+            print("%s" % (w))
+            pass
+        return w
 
     for i in range(args.repeat):
         start = perf_counter()
