@@ -236,7 +236,7 @@ def smart_choice(mask, words, pop_size = 65535):
         pass
     return best[1]    
 
-def play(words, secret, get_choice):
+def play(words, secret, get_choice, absurd=False):
     """Play wordle with the given wordlist, secret, and choice algorithm. 
 
     If `secret == None`, prompts the user for assessment of each guess.
@@ -258,7 +258,7 @@ def play(words, secret, get_choice):
         if secret:
             a = assess(secret, w)
         else:
-            a = prompt_assessment(w)
+            a = p1rompt_assessment(w)
             pass
 
         if a != "G"*wordlen:
@@ -266,6 +266,9 @@ def play(words, secret, get_choice):
             words = filter(words, mask)
             if not quiet:
                 print("\t%d words remain" % (len(words)))
+            pass
+        if absurd:
+            secret = random.choice(words)
             pass
         turn += 1
         pass
@@ -304,6 +307,8 @@ def main():
     ap.add_argument("--prompt-choice", action="store_true",
                     help="Prompt interactively for guesses")
     ap.add_argument("--secret", metavar="SECRET", help="Specify the secret word")
+    ap.add_argument("--absurd", action="store_true", default=False,
+                    help="Choose a new (valid) secret word after each turn")
     ap.add_argument("--quiet", action="store_true",
                     help="Only output the number of turns for each trial")
     args = ap.parse_args()
@@ -334,7 +339,7 @@ def main():
         else:
             secret = None
             pass
-        turns = play(words, secret, chooser)
+        turns = play(words, secret, chooser, absurd=args.absurd)
         if quiet:
             print("%d" % (turns))
             pass
